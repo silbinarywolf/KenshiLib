@@ -734,3 +734,11 @@ public:
     // no_addr class Character & operator=(const class Character & _a1);// public missing arg names
     // virtual void * __vecDelDtor(unsigned int _a1) = 0;// public vtable offset = 0x0 missing arg names
 };
+
+// Check that 'nameTag' is at the expected RVA offset at compile-time.
+// 
+// We check this field because it is after 'std::string sex;' and 'std::string' is known to vary in size across C++ compilers,
+// it's a safe bet that if its wrong you're using the wrong tools and could end up writing a plugin that causes memory bugs / crashes.
+//
+// WARNING: If you got an error here, you're using an invalid C++ compiler and are likely cause memory bugs / crashes if you remove these checks and push forward.
+static_assert(offsetof(Character, nameTag) == 0x638, "expected nameTag offset to be at offset 0x638 (decimal: 1592), must use a MSVC 2010 compatible compiler or memory bugs/crashes are likely to occur");

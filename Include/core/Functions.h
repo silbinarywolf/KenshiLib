@@ -3,6 +3,23 @@
 #include <Defines.h>
 #include <stdint.h>
 
+// NOTE: Only used for static_assert
+#include <string>
+#include <vector>
+#include <map>
+
+// Validate we are using MSVC 2010 by checking the size of common C++ data structures.
+//
+// This is to ensure developers new to C/C++ aren't going to compile mods with the wrong compiler tools and accidentally
+// create mods that randomly corrupt memory.
+//
+// We do this check in Functions.h as every mod needs to at least call GetRealAddress() in one file.
+//
+// WARNING: If you got an error here, you're using an invalid C++ compiler and will likely cause memory bugs / crashes if you remove these checks and push forward.
+static_assert(sizeof(std::string) == 40, "std::string should be 40 bytes, must use a MSVC 2010 compatible compiler or memory bugs/crashes are likely to occur"); // Can be 24 bytes in Clang, 32 bytes in other MSVC versions, incompatible.
+static_assert(sizeof(std::vector<std::string>) == 32, "std::vector<...> must be 32 bytes, must use a MSVC 2010 compatible compiler or memory bugs/crashes are likely to occur"); // Can be 24 bytes in Clang, 24 bytes in other MSVC versions, incompatible.
+static_assert(sizeof(std::map<std::string, std::string>) == 32, "std::map<..., ...> must be 32 bytes, must use a MSVC 2010 compatible compiler or memory bugs/crashes are likely to occur"); // Can be 24 bytes in Clang, 16 bytes in other MSVC versions, incompatible.
+
 namespace KenshiLib
 {
 	KLIB_EXPORT intptr_t GetRealAddress(void* fun);
